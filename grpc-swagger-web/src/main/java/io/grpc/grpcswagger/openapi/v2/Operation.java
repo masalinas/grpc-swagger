@@ -10,7 +10,7 @@ import lombok.Data;
  * @author liuzhengyang
  */
 @Data
-class Operation {
+public class Operation {
     private String description;
     private String operationId;
     private List<Parameter> parameters;
@@ -18,4 +18,5 @@ class Operation {
     private List<String> schemes = Collections.singletonList("http");
     private List<String> produces = Collections.singletonList("application/json");
     private List<String> consumes = Collections.singletonList("application/json");
+    private List<String> tags;
 }

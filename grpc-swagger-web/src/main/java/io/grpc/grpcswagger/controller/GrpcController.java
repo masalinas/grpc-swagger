@@ -66,7 +66,7 @@ public class GrpcController {
     public void init() {
         ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
     }
-
+    
     @RequestMapping("/v2/api-docs")
     public Object groupResponse(@RequestParam("service") String service, HttpServletRequest httpServletRequest) {
         String apiHost = httpServletRequest.getHeader("Host");

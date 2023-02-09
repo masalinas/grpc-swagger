@@ -6,6 +6,6 @@ import lombok.Data;
  * @author liuzhengyang
  */
 @Data
-class PathItem {
+public class PathItem {
     private Operation post;
 }

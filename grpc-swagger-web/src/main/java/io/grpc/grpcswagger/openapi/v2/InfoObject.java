@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-class InfoObject {
+public class InfoObject {
     private String title;
     private String version = "0.0.1";
 }

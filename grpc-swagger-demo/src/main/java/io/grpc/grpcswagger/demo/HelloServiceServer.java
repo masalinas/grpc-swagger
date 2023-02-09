@@ -17,7 +17,7 @@ public class HelloServiceServer {
 
     public static void main(String[] args) throws Exception {
         logger.info("Starting server on port " + DEMO_SERVER_PORT);
-        Server server = ServerBuilder.forPort(DEMO_SERVER_PORT)
+        Server server = ServerBuilder.forPort(DEMO_SERVER_PORT)        		
                 .addService(ProtoReflectionService.newInstance())
                 .addService(new HelloServiceImpl())
                 .build()
