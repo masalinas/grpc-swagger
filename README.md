@@ -10,6 +10,7 @@
 
 - [What is gRPC-swagger](#what-is-grpc-swagger)
 - [Feature List](#feature-list)
+- [New Feature List](#new-feature-list)
 - [Screenshots](#screenshots)
 - [Live Demo](#live-demo)
 - [Build and Run](#build-and-run)
@@ -40,8 +41,7 @@ gRPC-swagger is a [gRPC](https://github.com/grpc/) debuggling tool developed bas
 * Simple to call gRPC method.
 
 
-## [NEW]-Feature List
-
+## New Feature List
 
 * a NEW endpoint under **/swagger-ui** was created to recover all grpcs service methods at the same time grouped by service name in swagger-ui portal, without select each service previously to open a particular swagger-ui portal for each one.
 
