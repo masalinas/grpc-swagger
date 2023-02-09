@@ -39,6 +39,20 @@ gRPC-swagger is a [gRPC](https://github.com/grpc/) debuggling tool developed bas
 * Integrated with swagger-ui, you can see the definitions of gRPC methods and parameters conveniently.
 * Simple to call gRPC method.
 
+
+## [NEW] Feature List
+
+* a NEW endpoint under **/swagger-ui** was created to recover all grpcs service methods at the same time grouped by service name in swagger-ui portal, without select each service previously to open a particular swagger-ui portal for each one.
+
+For more technical details of this new feature go to [grpc-swagger-web README](../grpc-swagger-web/README.md)
+
+To open the swagger-ui portal with all grpc service methods grouped link this uri:
+
+
+```
+http://localhost:8080/swagger-ui
+```
+
 ## Screenshots
 
 ![](doc/screenshots/01.png)
