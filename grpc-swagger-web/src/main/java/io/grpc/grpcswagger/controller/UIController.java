@@ -59,7 +59,7 @@ public class UIController {
     	ObjectWriter ow = mapper.writer();
     	String json = ow.writeValueAsString(swaggerUIDocumentation);
     	
-    	LOG.info("Saving agregate gRPC swagger document ...");   	    
+    	LOG.info("Saving agregate gRPC swagger document in temporal folder tmp ...");   	    
     	Path swaggerFolder = Paths.get("/tmp");
     	    	
     	FileWriter file = new FileWriter(swaggerFolder.toString() + "/swagger.json");
@@ -67,7 +67,7 @@ public class UIController {
         file.close();
             
         // open swagger ui injecting swagger document
-        LOG.info("Injecting agregate gRPC swagger document ...");
+        LOG.info("Opening swagger-ui and injecting agregate gRPC swagger document ...");
         return "redirect:" + apiProtocol +"://" + apiHost + "/ui/index.html?url=" + apiProtocol + "://" + apiHost + "/ui/swagger.json";
     }
 }
