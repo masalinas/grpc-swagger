@@ -2,6 +2,9 @@ package io.grpc.grpcswagger.controller;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -41,11 +45,12 @@ public class UIController {
     }
         
     @RequestMapping("/swagger-ui")
-    public String swaggerUI(HttpServletRequest httpServletRequest) throws IOException {
+    public String swaggerUI(HttpServletRequest httpServletRequest) throws Exception {
     	String apiProtocol = httpServletRequest.getScheme();
     	String apiHost = httpServletRequest.getHeader("Host");
     	
     	// create swagger document from gRPC services exposed
+    	LOG.info("Creating agregate gRPC swagger document ...");
     	Object swaggerUIDocumentation = swaggerUIService.getSwaggerUIDocumentation("", apiHost, swaggerUiTitle, grpcHost, grpcPort);
     	
     	// persist swagger document file
@@ -54,13 +59,17 @@ public class UIController {
     	ObjectWriter ow = mapper.writer();
     	String json = ow.writeValueAsString(swaggerUIDocumentation);
     	
-    	ClassLoader classLoader = getClass().getClassLoader();
-    	
-    	FileWriter file = new FileWriter(classLoader.getResource("./static").getFile() + "/swagger.json");
+    	LOG.info("Saving agregate gRPC swagger document ...");   	    
+    	Path swaggerFolder = Paths.get("/tmp");
+    	    	
+    	FileWriter file = new FileWriter(swaggerFolder.toString() + "/swagger.json");
         file.write(json);
         file.close();
             
         // open swagger ui injecting swagger document
+        LOG.info("Injecting agregate gRPC swagger document ...");
         return "redirect:" + apiProtocol +"://" + apiHost + "/ui/index.html?url=" + apiProtocol + "://" + apiHost + "/ui/swagger.json";
     }
 }
+
+
