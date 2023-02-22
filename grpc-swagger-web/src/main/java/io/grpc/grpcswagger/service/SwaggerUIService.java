@@ -65,7 +65,7 @@ public class SwaggerUIService {
         SwaggerV2Documentation documentation = new SwaggerV2Documentation();
         documentation.setInfo(InfoObject.builder().title(swaggerUiTitle).build());
         documentation.setSchemes(new ArrayList<>(Arrays.asList("http")));
-        documentation.setHost(apiHost);
+        documentation.setHost(apiHost + "/swagger-ui");
         documentation.setDefinitions(new HashMap<String, DefinitionType>());
         documentation.setPaths(new HashMap<String, PathItem>());
                

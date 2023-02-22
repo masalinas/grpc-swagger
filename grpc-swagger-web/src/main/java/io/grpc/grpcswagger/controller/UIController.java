@@ -38,7 +38,9 @@ public class UIController {
 	private String grpcHost = "localhost";
 	@Value("#{environment.GRPC_PORT}")
 	private Integer grpcPort = 9090;
-		
+	@Value("#{environment.HTTP_PROTOCOL}")
+	private String http_protocol = "http";
+
     @RequestMapping("/")
     public String index() {
         return "redirect:ui/r.html";
@@ -46,7 +48,6 @@ public class UIController {
         
     @RequestMapping("/swagger-ui")
     public String swaggerUI(HttpServletRequest httpServletRequest) throws Exception {
-    	String apiProtocol = httpServletRequest.getScheme();
     	String apiHost = httpServletRequest.getHeader("Host");
     	
     	// create swagger document from gRPC services exposed
@@ -68,7 +69,7 @@ public class UIController {
             
         // open swagger ui injecting swagger document
         LOG.info("Opening swagger-ui and injecting agregate gRPC swagger document ...");
-        return "redirect:" + apiProtocol +"://" + apiHost + "/ui/index.html?url=" + apiProtocol + "://" + apiHost + "/ui/swagger.json";
+        return "redirect:" + http_protocol +"://" + apiHost + "/swagger-ui/index.html?url=" + http_protocol + "://" + apiHost + "/swagger-ui/swagger.json";
     }
 }
 
