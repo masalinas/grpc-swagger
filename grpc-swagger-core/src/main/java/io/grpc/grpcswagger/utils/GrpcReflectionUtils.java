@@ -8,12 +8,19 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
@@ -21,9 +28,11 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.MethodDescriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
+import com.google.protobuf.util.Timestamps;
 
 import io.grpc.Channel;
 import io.grpc.MethodDescriptor.MethodType;
@@ -97,6 +106,42 @@ public class GrpcReflectionUtils {
         }
     }
 
+    private static Object parseTimestampJson(Object input) throws JSONException {
+        if (input instanceof JSONObject ||
+        	input instanceof JSONArray) {
+            Set<String> keys = ((JSONObject) input).keySet();
+
+            /*if (keys.size() == 0)
+            	return input;*/
+            
+            for (String key : keys) {
+                if (!(((JSONObject) input).get(key) instanceof JSONArray)) {
+                    if (((JSONObject) input).get(key) instanceof JSONObject) {
+                    	if(((JSONObject)((JSONObject) input).get(key)).size() == 2 &&
+                    	   ((JSONObject)((JSONObject) input).get(key)).keySet().containsAll(Arrays.asList("seconds", "nanos"))) {        	
+                    		Integer seconds = ((JSONObject)((JSONObject) input).get(key)).getInteger("seconds");
+                    		Integer nanos = ((JSONObject)((JSONObject) input).get(key)).getInteger("nanos");
+                    		Timestamp timestampValue = Timestamp.newBuilder().setSeconds(seconds).setNanos(nanos).build();
+
+                    		((JSONObject) input).remove(key);
+                    		((JSONObject) input).put(key, Timestamps.toString(timestampValue));
+                    } else
+                    	parseTimestampJson(((JSONObject) input).get(key));
+                    }
+                }
+                else {
+                    for (int i = 0; i < ((JSONArray)((JSONObject) input).get(key)).size(); i++) {
+                    	if (((JSONArray)((JSONObject) input).get(key)).get(i) instanceof JSONObject ||
+                    		((JSONArray)((JSONObject) input).get(key)).get(i) instanceof JSONArray)
+                    		parseTimestampJson(((JSONArray)((JSONObject) input).get(key)).get(i));
+                    }
+                }
+            }
+        }
+        
+        return input;
+    }
+    
     public static List<DynamicMessage> parseToMessages(TypeRegistry registry, Descriptor descriptor,
             List<String> jsonTexts) {
         Parser parser = JsonFormat.parser().usingTypeRegistry(registry);
@@ -104,6 +149,29 @@ public class GrpcReflectionUtils {
         try {
             for (String jsonText : jsonTexts) {
                 DynamicMessage.Builder messageBuilder = DynamicMessage.newBuilder(descriptor);
+                
+                // convert if exist the protobuf timestamp from (seconds, nanos) to string previous send the request to gRPC server	
+	            JSONObject jsonObject = JSON.parseObject(jsonText);
+	            	            
+	            // search particular google.protobuf.Timestamp timestamp attribute to parse from (seconds, nano) to string
+	            /*if (jsonObject.containsKey("base_data") && 
+	            		jsonObject.getJSONObject("base_data").containsKey("timestamp") &&
+	            		jsonObject.getJSONObject("base_data").getJSONObject("timestamp").containsKey("seconds") &&
+	            		jsonObject.getJSONObject("base_data").getJSONObject("timestamp").containsKey("nanos")) {
+	                Integer seconds = jsonObject.getJSONObject("base_data").getJSONObject("timestamp").getInteger("seconds");
+	                Integer nanos = jsonObject.getJSONObject("base_data").getJSONObject("timestamp").getInteger("nanos");
+	                Timestamp timestampValue = Timestamp.newBuilder().setSeconds(seconds).setNanos(nanos).build();
+	                JSONObject timestamp = jsonObject.getJSONObject("base_data");
+	                timestamp.put("timestamp", Timestamps.toString(timestampValue));
+	                jsonText = jsonObject.toString();
+	            }*/
+	            
+	            // recursive search google.protobuf.Timestamp to parse from (seconds, nano) to string
+	            Object jsonObjectParsed = parseTimestampJson(jsonObject);
+	            
+	            if (jsonObjectParsed != null)
+	            	jsonText = ((JSONObject) jsonObjectParsed).toString();
+	            
                 parser.merge(jsonText, messageBuilder);
                 messages.add(messageBuilder.build());
             }

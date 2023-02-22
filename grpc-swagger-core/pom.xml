@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+    	<groupId>io.grpc</groupId>
         <artifactId>grpc-swagger</artifactId>
-        <groupId>io.grpc</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,9 +12,9 @@
     <artifactId>grpc-swagger-core</artifactId>
 
     <properties>
-        <grpc.version>1.16.1</grpc.version>
+        <grpc.version>1.52.1</grpc.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <protobuf-java-util.version>3.6.1</protobuf-java-util.version>
+        <protobuf-java-util.version>3.22.0</protobuf-java-util.version>
         <jcommander.version>1.72</jcommander.version>
         <fastjson.version>1.2.47</fastjson.version>
     </properties>
@@ -41,13 +41,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
@@ -94,7 +92,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
         </dependency>
 
         <dependency>
@@ -107,7 +104,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -163,5 +159,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
